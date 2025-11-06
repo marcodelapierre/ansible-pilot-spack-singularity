@@ -1,0 +1,5 @@
+spack_user: spack
+spack_user_uid: 983
+spack_user_gid: 983
+
+install_root_dir: /opt_test/sw

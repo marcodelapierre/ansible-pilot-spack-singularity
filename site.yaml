@@ -1,0 +1,8 @@
+- name: Playbook to install Spack, Singularity and SHPC
+  hosts: nodes
+
+  roles:
+    - role: common
+    # - role: spack
+    # - role: singularity
+    # - role: shpc
