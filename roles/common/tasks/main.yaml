@@ -21,9 +21,9 @@
 - name: Create installation root directory
   ansible.builtin.file:
     path: "{{ install_root_dir }}"
-    state: directory
     owner: "{{ spack_user }}"
     group: "{{ spack_user }}"
     mode: "0755"
+    state: directory
 
   become: true
