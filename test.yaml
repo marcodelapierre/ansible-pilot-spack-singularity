@@ -1,0 +1,24 @@
+- name: Test Playbook to List Home Directory Files
+  hosts: nodes
+
+  tasks:
+    - name: List files in the current user's home
+      ansible.builtin.command: ls -l
+      args:
+        chdir: "{{ lookup('env','HOME') }}"
+      register: home_listing
+
+    - name: Show home directory listing
+      ansible.builtin.debug:
+        var: home_listing.stdout_lines
+
+    - name: List files in root's home
+      ansible.builtin.command: ls -l
+      become: true
+      args:
+        chdir: "/root"
+      register: home_listing_root
+
+    - name: Show root home directory listing
+      ansible.builtin.debug:
+        var: home_listing_root.stdout_lines
