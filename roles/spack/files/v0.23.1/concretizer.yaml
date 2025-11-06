@@ -1,0 +1,15 @@
+concretizer:
+  reuse: true
+  targets:
+    # Determine whether we want to target specific or generic
+    # microarchitectures. Valid values are: "microarchitectures" or "generic".
+    # An example of "microarchitectures" would be "skylake" or "bulldozer",
+    # while an example of "generic" would be "aarch64" or "x86_64_v4".
+    granularity: generic
+    host_compatible: true
+  unify: true
+  # Option to specify compatibility between operating systems for reuse of compilers and packages
+  # Specified as a key: [list] where the key is the os that is being targeted, and the list contains the OS's
+  # it can reuse. Note this is a directional compatibility so mutual compatibility between two OS's
+  # requires two entries i.e. os_compatible: {sonoma: [monterey], monterey: [sonoma]}
+  os_compatible: {}

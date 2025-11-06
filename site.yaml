@@ -3,6 +3,6 @@
 
   roles:
     - role: common
-    # - role: spack
+    - role: spack
     # - role: singularity
     # - role: shpc
