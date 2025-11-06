@@ -51,9 +51,9 @@
         depth: 2
         umask: "0022"
         clone: true
+  when: not spack_dir.stat.exists
   become_user: "{{ spack_user }}"
   become: true
-  when: not spack_dir.stat.exists
 
 
 - block:
