@@ -1,0 +1,72 @@
+---
+# Dependencies block: root user
+- block:
+    ## Marco: apt has issues on my laptop
+    # - name: Update apt cache
+    #   ansible.builtin.apt:
+    #     update_cache: true
+    #     cache_valid_time: 3600
+
+    - name: Install Singularity dependencies
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - cryptsetup
+          - git
+          - libssl-dev
+          - libglib2.0-dev
+          - libgpgme11-dev
+          - libseccomp-dev
+          - pkg-config
+          - runc
+          - squashfs-tools
+          - uuid-dev
+          - wget
+        state: present
+  become: true
+
+
+- block:
+    - name: Install Go language (a Singularity dependency)
+      ansible.builtin.shell: |
+        wget https://golang.org/dl/go{{ singularity_go_version }}.linux-amd64.tar.gz && \
+        tar -C . -xzf go{{ singularity_go_version }}.linux-amd64.tar.gz && \
+        rm go{{ singularity_go_version }}.linux-amd64.tar.gz
+      args:
+        chdir: "{{ install_root_dir }}"
+        creates: "{{ install_root_dir }}/go/bin/go"
+
+    - name: Install Singularity
+      ansible.builtin.shell: |
+        export PATH={{ install_root_dir }}/go/bin:$PATH && \
+        wget https://github.com/sylabs/singularity/releases/download/v{{ singularity_version }}/singularity-ce-{{ singularity_version }}.tar.gz && \
+        tar -xzf singularity-ce-{{ singularity_version }}.tar.gz && \
+        cd singularity-ce-{{ singularity_version }} && \
+        ./mconfig --prefix={{ install_root_dir }}/singularity && \
+        make -C ./builddir && \
+        make -C ./builddir install && \
+        cd .. && \
+        rm -rf singularity-ce-{{ singularity_version }}*
+      args:
+        chdir: "{{ install_root_dir }}"
+        creates: "{{ install_root_dir }}/singularity/bin/singularity"
+
+    - name: Edit Singularity configuration
+      ansible.builtin.lineinfile:
+        path: "{{ install_root_dir }}/singularity/etc/singularity/singularity.conf"
+        regexp: '^#* *mount *home *= *yes *'
+        line: 'mount home = no'
+        state: present
+  become_user: "{{ spack_user }}"
+  become: true
+
+- block:
+    - name: Copy Singularity sourceable script
+      ansible.builtin.template:
+        src: bin/source-singularity.sh.j2
+        dest: "{{ install_root_dir }}/singularity/bin/source-singularity.sh"
+        owner: "{{ spack_user }}"
+        group: "{{ spack_user }}"
+        mode: "0644"
+        force: false
+  become: true

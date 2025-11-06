@@ -4,5 +4,5 @@
   roles:
     - role: common
     - role: spack
-    # - role: singularity
+    - role: singularity
     # - role: shpc
