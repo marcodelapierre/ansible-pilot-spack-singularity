@@ -5,7 +5,7 @@
     - name: List files in the current user's home
       ansible.builtin.command: ls -l
       args:
-        chdir: "{{ lookup('env','HOME') }}"
+        chdir: "{{ lookup('env', 'HOME') }}"
       register: home_listing
 
     - name: Show home directory listing
@@ -14,7 +14,7 @@
 
     - name: List files in root's home
       ansible.builtin.command: ls -l
-      become: yes
+      become: true
       args:
         chdir: "/root"
       register: home_listing_root

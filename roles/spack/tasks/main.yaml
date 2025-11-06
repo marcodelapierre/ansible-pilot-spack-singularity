@@ -1,73 +1,76 @@
 ---
 # Dependencies block: root user
 - block:
-  ## Marco: apt has issues on my laptop
-  # - name: Update apt cache
-  #   ansible.builtin.apt:
-  #     update_cache: yes
-  #     cache_valid_time: 3600
+    ## Marco: apt has issues on my laptop
+    # - name: Update apt cache
+    #   ansible.builtin.apt:
+    #     update_cache: true
+    #     cache_valid_time: 3600
 
-  - name: Install Spack dependencies
-    ansible.builtin.apt:
-      name:
-      - build-essential
-      - bzip2
-      - ca-certificates
-      - coreutils
-      - curl
-      - file
-      - gfortran
-      - git
-      - gpg
-      - gzip
-      - lsb-release
-      - patch
-      - python3
-      - python3-pip
-      - python3-setuptools
-      - python3-venv
-      - tar
-      - unzip
-      - xz-utils
-      - zip
-      - zstd
-      state: present
+    - name: Install Spack dependencies
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - bzip2
+          - ca-certificates
+          - coreutils
+          - curl
+          - file
+          - gfortran
+          - git
+          - gpg
+          - gzip
+          - lsb-release
+          - patch
+          - python3
+          - python3-pip
+          - python3-setuptools
+          - python3-venv
+          - tar
+          - unzip
+          - xz-utils
+          - zip
+          - zstd
+        state: present
 
-  become: yes
+  become: true
+
 
 - name: Check if Spack directory exists
   ansible.builtin.stat:
     path: "{{ install_root_dir }}/spack/.git"
   register: spack_dir
 
+
 # Spack installation: Spack user
 - block:
-  - name: Clone Spack repository
-    ansible.builtin.git:
-      repo: "https://github.com/spack/spack"
-      dest: "{{ install_root_dir }}/spack"
-      version: "{{ spack_version }}"
-      depth: 2
-      umask: "0022"
-      clone: yes
+    - name: Clone Spack repository
+      ansible.builtin.git:
+        repo: "https://github.com/spack/spack"
+        dest: "{{ install_root_dir }}/spack"
+        version: "{{ spack_version }}"
+        depth: 2
+        umask: "0022"
+        clone: true
   become_user: "{{ spack_user }}"
-  become: yes
+  become: true
   when: not spack_dir.stat.exists
 
+
 - block:
-  - name: Copy default Spack configuration files
-    ansible.builtin.copy:
-      src: "{{ spack_version }}/{{ item }}.yaml"
-      dest: "{{ install_root_dir }}/spack/etc/spack/"
-      owner: "{{ spack_user }}"
-      group: "{{ spack_user }}"
-      mode: "0644"
-      force: no
-    with_items:
-      - bootstrap
-      - concretizer
-      - config
-      - mirrors
-      - modules
-      - packages
-  become: yes
+    - name: Copy default Spack configuration files
+      ansible.builtin.copy:
+        src: "{{ spack_version }}/{{ item }}.yaml"
+        dest: "{{ install_root_dir }}/spack/etc/spack/"
+        owner: "{{ spack_user }}"
+        group: "{{ spack_user }}"
+        mode: "0644"
+        force: false
+      with_items:
+        - bootstrap
+        - concretizer
+        - config
+        - mirrors
+        - modules
+        - packages
+  become: true

@@ -1,21 +1,21 @@
 ---
 - block:
-  - name: Create Spack group
-    ansible.builtin.group:
-      name: "{{ spack_user }}"
-      gid: "{{ spack_user_gid }}"
-      state: present
+    - name: Create Spack group
+      ansible.builtin.group:
+        name: "{{ spack_user }}"
+        gid: "{{ spack_user_gid }}"
+        state: present
 
-  - name: Create Spack user
-    ansible.builtin.user:
-      name: "{{ spack_user }}"
-      comment: Spack user
-      shell: /bin/bash
-      create_home: yes
-      home: "/home/{{ spack_user }}"
-      uid: "{{ spack_user_uid }}"
-      group: "{{ spack_user }}"
-      state: present
+    - name: Create Spack user
+      ansible.builtin.user:
+        name: "{{ spack_user }}"
+        comment: Spack user
+        shell: /bin/bash
+        create_home: true
+        home: "/home/{{ spack_user }}"
+        uid: "{{ spack_user_uid }}"
+        group: "{{ spack_user }}"
+        state: present
 
 - name: Create installation root directory
   ansible.builtin.file:
@@ -25,4 +25,4 @@
     mode: "0755"
     state: directory
 
-  become: yes
+  become: true
