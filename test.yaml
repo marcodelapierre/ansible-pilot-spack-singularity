@@ -14,7 +14,7 @@
 
     - name: List files in root's home
       ansible.builtin.command: ls -l
-      become: true
+      become: yes
       args:
         chdir: "/root"
       register: home_listing_root

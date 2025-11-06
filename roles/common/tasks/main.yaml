@@ -1,6 +1,5 @@
 ---
-- block: 
-
+- block:
   - name: Create Spack group
     ansible.builtin.group:
       name: "{{ spack_user }}"
@@ -26,4 +25,4 @@
     mode: "0755"
     state: directory
 
-  become: true
+  become: yes
