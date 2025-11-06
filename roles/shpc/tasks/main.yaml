@@ -16,6 +16,15 @@
   become: true
 
 
+- name: Store Python 3 Major.Minor version
+  ansible.builtin.command: python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"
+  register: python3_version
+
+- name: Set Python 3 Major.Minor version as variable
+  ansible.builtin.set_fact:
+    python3_majorminor: "{{ python3_version.stdout }}"
+
+
 # SHPC installation: Spack user
 - block:
     - name: Install SHPC via pip
@@ -23,4 +32,56 @@
       args:
         creates: "{{ install_root_dir }}/shpc/local/bin/shpc"
   become_user: "{{ spack_user }}"
+  become: true
+
+
+- name: Check if SHPC registry directory exists
+  ansible.builtin.stat:
+    path: "{{ install_root_dir }}/shpc/local/registry/.git"
+  register: shpc_registry_dir
+
+
+# SHPC registry installation: Spack user
+- block:
+    - name: Clone SHPC registry repository
+      ansible.builtin.git:
+        repo: "https://github.com/singularityhub/shpc-registry"
+        dest: "{{ install_root_dir }}/shpc/local/registry"
+        version: "{{ shpc_registry_version }}"
+        depth: 2
+        umask: "0022"
+        clone: true
+  when: not shpc_registry_dir.stat.exists
+  become_user: "{{ spack_user }}"
+  become: true
+
+
+# SHPC configuration: Spack user
+- block:
+    - name: Edit SHPC configuration for registry
+      ansible.builtin.lineinfile:
+        path: "{{ install_root_dir }}/shpc/local/lib/python{{ python3_majorminor }}/dist-packages/shpc/settings.yml"
+        # original: registry: [https://github.com/singularityhub/shpc-registry]
+        regexp: '^ *registry: *\[https://github.com/singularityhub/shpc-registry\]'
+        line: 'registry: [{{ install_root_dir }}/shpc/local/registry]'
+        state: present
+
+    - name: Edit SHPC configuration for root_dir
+      ansible.builtin.replace:
+        path: "{{ install_root_dir }}/shpc/local/lib/python{{ python3_majorminor }}/dist-packages/shpc/settings.yml"
+        regexp: ': *\$root_dir'
+        replace: ': {{ install_root_dir }}/shpc/local'
+  become_user: "{{ spack_user }}"
+  become: true
+
+
+- block:
+    - name: Copy SHPC sourceable script
+      ansible.builtin.template:
+        src: bin/source-shpc.sh.j2
+        dest: "{{ install_root_dir }}/shpc/local/bin/source-shpc.sh"
+        owner: "{{ spack_user }}"
+        group: "{{ spack_user }}"
+        mode: "0644"
+        force: false
   become: true
