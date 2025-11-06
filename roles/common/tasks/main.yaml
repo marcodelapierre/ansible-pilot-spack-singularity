@@ -17,12 +17,12 @@
         group: "{{ spack_user }}"
         state: present
 
-- name: Create installation root directory
-  ansible.builtin.file:
-    path: "{{ install_root_dir }}"
-    owner: "{{ spack_user }}"
-    group: "{{ spack_user }}"
-    mode: "0755"
-    state: directory
+    - name: Create installation root directory
+      ansible.builtin.file:
+        path: "{{ install_root_dir }}"
+        owner: "{{ spack_user }}"
+        group: "{{ spack_user }}"
+        mode: "0755"
+        state: directory
 
   become: true

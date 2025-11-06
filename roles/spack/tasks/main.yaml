@@ -32,7 +32,6 @@
           - zip
           - zstd
         state: present
-
   become: true
 
 
