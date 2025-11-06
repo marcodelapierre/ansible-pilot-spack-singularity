@@ -19,6 +19,7 @@
 - name: Store Python 3 Major.Minor version
   ansible.builtin.command: python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"
   register: python3_version
+  changed_when: false
 
 - name: Set Python 3 Major.Minor version as variable
   ansible.builtin.set_fact:

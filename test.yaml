@@ -7,6 +7,7 @@
       args:
         chdir: "{{ lookup('env', 'HOME') }}"
       register: home_listing
+      changed_when: false
 
     - name: Show home directory listing
       ansible.builtin.debug:
@@ -18,6 +19,7 @@
       args:
         chdir: "/root"
       register: home_listing_root
+      changed_when: false
 
     - name: Show root home directory listing
       ansible.builtin.debug:
