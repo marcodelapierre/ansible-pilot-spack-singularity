@@ -1,0 +1,26 @@
+# OS dependencies installation: root user
+- block:
+    ## Marco: apt has issues on my laptop
+    # - name: Update apt cache
+    #   ansible.builtin.apt:
+    #     update_cache: true
+    #     cache_valid_time: 3600
+
+    - name: Install SHPC dependencies
+      ansible.builtin.apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-setuptools
+        state: present
+  become: true
+
+
+# SHPC installation: Spack user
+- block:
+    - name: Install SHPC via pip
+      ansible.builtin.command: pip3 install singularity-hpc=={{ shpc_version }} --prefix={{ install_root_dir }}/shpc
+      args:
+        creates: "{{ install_root_dir }}/shpc/local/bin/shpc"
+  become_user: "{{ spack_user }}"
+  become: true
