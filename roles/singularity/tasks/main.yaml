@@ -1,5 +1,5 @@
 ---
-# Dependencies block: root user
+# OS dependencies installation: root user
 - block:
     ## Marco: apt has issues on my laptop
     # - name: Update apt cache
@@ -26,6 +26,7 @@
   become: true
 
 
+# Go and Singularity installation: Spack user
 - block:
     - name: Install Go language (a Singularity dependency)
       ansible.builtin.shell: |
@@ -59,6 +60,7 @@
         state: present
   become_user: "{{ spack_user }}"
   become: true
+
 
 - block:
     - name: Copy Singularity sourceable script

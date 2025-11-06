@@ -1,5 +1,5 @@
 ---
-# Dependencies block: root user
+# OS dependencies installation: root user
 - block:
     ## Marco: apt has issues on my laptop
     # - name: Update apt cache
