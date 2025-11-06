@@ -13,6 +13,11 @@ To run the playbook with sudo privileges required for some tasks:
 ansible-playbook --ask-become-pass site.yaml
 ```
 
+To run the test playbook:
+```
+ansible-playbook --ask-become-pass test.yaml
+```
+
 To generate a template configuration:
 ```
 ansible-config init --disabled -t all >ansible_template.cfg
